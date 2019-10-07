@@ -1,11 +1,11 @@
 """Script containing the Flow kernel object for interacting with simulators."""
 
 import warnings
-from flow.core.kernel.simulation import TraCISimulation, AimsunKernelSimulation
-from flow.core.kernel.network import TraCIKernelNetwork, AimsunKernelNetwork
-from flow.core.kernel.vehicle import TraCIVehicle, AimsunKernelVehicle
+from flow.core.kernel.simulation import TraCISimulation, AimsunKernelSimulation, OTMSimulation
+from flow.core.kernel.network import TraCIKernelNetwork, AimsunKernelNetwork, OTMKernelNetwork
+from flow.core.kernel.vehicle import TraCIVehicle, AimsunKernelVehicle, OTMVehicle
 from flow.core.kernel.traffic_light import TraCITrafficLight, \
-    AimsunKernelTrafficLight
+    AimsunKernelTrafficLight, OTMTrafficLight
 from flow.utils.exceptions import FatalFlowError
 
 
@@ -72,6 +72,11 @@ class Kernel(object):
             self.network = AimsunKernelNetwork(self, sim_params)
             self.vehicle = AimsunKernelVehicle(self, sim_params)
             self.traffic_light = AimsunKernelTrafficLight(self)
+        elif simulator == 'otm':
+            self.simulation = OTMSimulation(self)
+            self.network = OTMKernelNetwork(self, sim_params)
+            self.vehicle = OTMVehicle(self, sim_params)
+            self.traffic_light = OTMTrafficLight(self)
         else:
             raise FatalFlowError('Simulator type "{}" is not valid.'.
                                  format(simulator))

@@ -588,6 +588,20 @@ class SumoParams(SimParams):
         self.teleport_time = teleport_time
         self.num_clients = num_clients
 
+class OTMParams(SimParams):
+    """OTM-specific simulation parameters.
+
+    Extends SimParams.
+
+    Attributes
+    ----------
+    ...
+    """
+
+    def __init__(self):
+
+        """Instantiate OTMParams."""
+        super(OTMParams, self).__init__()
 
 class EnvParams:
     """Environment and experiment-specific parameters.
