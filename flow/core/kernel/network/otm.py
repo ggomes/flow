@@ -63,14 +63,6 @@ class OTMKernelNetwork(BaseKernelNetwork):
         self.network = None
         
         self.nodfn = None
-        self.edgfn = None
-        self.typfn = None
-        self.cfgfn = None
-        self.netfn = None
-        self.confn = None
-        self.roufn = None
-        self.addfn = None
-        self.sumfn = None
         # self.guifn = None
         
         self._edges = None
@@ -99,36 +91,25 @@ class OTMKernelNetwork(BaseKernelNetwork):
 
         # names of the soon-to-be-generated xml and sumo config files
         self.nodfn = '%s.nod.xml' % self.network.name
-        # self.edgfn = '%s.edg.xml' % self.network.name
-        # self.typfn = '%s.typ.xml' % self.network.name
-        # self.cfgfn = '%s.netccfg' % self.network.name
-        # self.netfn = '%s.net.xml' % self.network.name
-        # self.confn = '%s.con.xml' % self.network.name
-        # self.roufn = '%s.rou.xml' % self.network.name
-        # self.addfn = '%s.add.xml' % self.network.name
-        # self.sumfn = '%s.sumo.cfg' % self.network.name
-        # self.guifn = '%s.gui.cfg' % self.network.name
 
-        
-        if True:
-            # combine all connections into a list
-            if network.connections is not None:
-                if isinstance(network.connections, list):
-                    connections = network.connections
-                else:
-                    connections = []
-                    for key in network.connections.keys():
-                        connections.extend(network.connections[key])
+        # combine all connections into a list
+        if network.connections is not None:
+            if isinstance(network.connections, list):
+                connections = network.connections
             else:
-                connections = None
-            self.generate_net(
-                self.network.net_params,
-                self.network.traffic_lights,
-                self.network.nodes,
-                self.network.edges,
-                self.network.types,
-                connections
-            )
+                connections = []
+                for key in network.connections.keys():
+                    connections.extend(network.connections[key])
+        else:
+            connections = None
+        self._edges = self.generate_net(
+            self.network.net_params,
+            self.network.traffic_lights,
+            self.network.nodes,
+            self.network.edges,
+            self.network.types,
+            connections
+        )
         
         # # list of edges and internal links (junctions)
         # self._edge_list = [
@@ -224,12 +205,12 @@ class OTMKernelNetwork(BaseKernelNetwork):
         node_id_map = {}
         id_ctr = 0
         # for nodes that have traffic lights that haven't been added
-        for node in nodes:
+        for nid, node in enumerate(nodes):
             if node['id'] not in tl_ids \
                     and node.get('type', None) == 'traffic_light':
                 traffic_lights.add(node['id'])
-            node_id_map[id_ctr] = node['id']
-            node['id'] = str(id_ctr)
+            node_id_map[node['id']] = str(nid)
+            node['id'] = str(nid)
 
             # modify the x and y values to be strings
             node['x'] = str(node['x'])
@@ -247,7 +228,10 @@ class OTMKernelNetwork(BaseKernelNetwork):
             network.append(E('node', **node_attributes))
 
         # modify the length, shape, numLanes, and speed values
-        for edge in edges:
+        # xml file for edges
+        links = etree.SubElement(network, 'links')
+        edge_dict = {}
+        for eid, edge in enumerate(edges):
             edge['length'] = str(edge['length'])
             if 'shape' in edge:
                 if not isinstance(edge['shape'], str):
@@ -255,24 +239,23 @@ class OTMKernelNetwork(BaseKernelNetwork):
                                              for x, y in edge['shape'])
             if 'numLanes' in edge:
                 edge['numLanes'] = str(edge['numLanes'])
+            else:
+                edge['numLanes'] = str(1)
             if 'speed' in edge:
                 edge['speed'] = str(edge['speed'])
 
-        # xml file for edges
-        edges = etree.SubElement(network, 'links')
-        for eid, edge_attributes in enumerate(edges):
-            edge_dict = {
-                'end_node_id': node_id_map[edge_attributes['to']],
-                'start_node_id': node_id_map[edge_attributes['from']],
+            edge_attrib = {
+                'end_node_id': node_id_map[edge['to']],
+                'start_node_id': node_id_map[edge['from']],
                 'lanes': edge['numLanes'],
                 'id': str(eid),
                 'roadparams': '1',
-                'length': edge_attributes['length']
+                'length': edge['length']
             }
+            edge_dict[edge['id']] = edge_attrib
 
-            link = etree.SubElement(edges, 'link', attrib=edge_dict)
-            # edges.append(link)
-            if 'shape' in edge_attributes:
+            link = etree.SubElement(links, 'link', attrib=edge_attrib)
+            if 'shape' in edge:
                 points = etree.SubElement(link, 'points')
                 for x, y in edge['shape']:
                     points.append(E('point'), attrib={
@@ -291,6 +274,7 @@ class OTMKernelNetwork(BaseKernelNetwork):
 
         ## Gabriel put xml dummy here (TODO FIX THIS LATER)
         self.cfg = self.net_path + "line.xml" # self.nodfn
+        return edge_dict
 
     # OVERRIDE!!
     def update(self, reset):
@@ -308,27 +292,27 @@ class OTMKernelNetwork(BaseKernelNetwork):
         """
         raise NotImplementedError
 
-    # OVERRIDE!!
     def close(self):
         """Close the network."""
-        raise NotImplementedError
+        try:
+            os.remove(self.net_path + self.nodfn)
+        except OSError:
+            pass
 
     ###########################################################################
     #                        State acquisition methods                        #
     ###########################################################################
 
-    # OVERRIDE!!
     def edge_length(self, edge_id):
         """Return the length of a given edge/junction.
 
         Return -1001 if edge not found.
         """
-        print("Implement Me")
-        # try:
-        #     return self._edges[edge_id]['length']
-        # except KeyError:
-        #     print('Error in edge length with key', edge_id)
-        #     return -1001
+        try:
+            return self._edges[edge_id]['length']
+        except KeyError:
+            print('Error in edge length with key', edge_id)
+            return -1001
 
     # OVERRIDE!!
     def length(self):

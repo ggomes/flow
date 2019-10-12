@@ -41,7 +41,7 @@ class OTMSimulation(KernelSimulation):
             the higher level kernel (used to call methods from other
             sub-kernels)
         """
-        self.current_time = 0
+        self.current_time = 0.
         KernelSimulation.__init__(self, master_kernel)
 
     def start_simulation(self, network, sim_params):
