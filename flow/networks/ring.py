@@ -89,7 +89,7 @@ class RingNetwork(Network):
             "x": -r,
             "y": 0
         }]
-
+        print(nodes)
         return nodes
 
     def specify_edges(self, net_params):
@@ -98,7 +98,7 @@ class RingNetwork(Network):
         resolution = net_params.additional_params["resolution"]
         r = length / (2 * pi)
         edgelen = length / 4.
-
+        
         edges = [{
             "id":
                 "bottom",
@@ -164,7 +164,7 @@ class RingNetwork(Network):
                     for t in linspace(pi, 3 * pi / 2, resolution)
                 ]
         }]
-
+        print(edges)
         return edges
 
     def specify_types(self, net_params):
