@@ -153,7 +153,6 @@ class Env(gym.Env):
         self.k = Kernel(simulator=self.simulator,
                         sim_params=sim_params)
 
-        print(self.network.net_params, print(self.k.network))
         # use the network class's network parameters to generate the necessary
         # network components within the network kernel
         self.k.network.generate_network(self.network)
