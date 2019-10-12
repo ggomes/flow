@@ -60,5 +60,5 @@ class OTMSimulation(KernelSimulation):
         # advance one sim dt.
 
         # Gabriel: implement a macro sim step. override flow.envs.base.Env.
-        # self.kernel_api.run(self.current_time, self.current_time+self.sim_step)
+        # self.kernel_api.run(self.current_time, self.current_time+self.observation_step)
         # self.current_time += self.sim_step
