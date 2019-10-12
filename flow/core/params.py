@@ -598,10 +598,20 @@ class OTMParams(SimParams):
     ...
     """
 
-    def __init__(self):
+    def __init__(self,
+                 sim_step=0.1,
+                 emission_path=None,
+                 render=False,
+                 save_render=False,
+                 sight_radius=25,
+                 show_radius=False,
+                 pxpm=2,
+                 restart_instance=False ):
 
         """Instantiate OTMParams."""
-        super(OTMParams, self).__init__()
+        super(OTMParams, self).__init__(
+            sim_step, render, restart_instance, emission_path, save_render,
+            sight_radius, show_radius, pxpm)
 
 class EnvParams:
     """Environment and experiment-specific parameters.
