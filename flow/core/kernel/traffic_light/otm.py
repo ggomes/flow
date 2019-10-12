@@ -18,6 +18,7 @@ class OTMTrafficLight(KernelTrafficLight):
             the higher level kernel (used to call methods from other
             sub-kernels)
         """
+        print("implement me")
         KernelTrafficLight.__init__(self, master_kernel)
 
         # self.__tls = dict()  # contains current time step traffic light data
