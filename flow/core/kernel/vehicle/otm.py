@@ -240,23 +240,23 @@ class OTMVehicle(KernelVehicle):
         speed : float
             starting speed of the added vehicle
         """
-        if veh_id in self.master_kernel.network.rts:
-            # If the vehicle has its own route, use that route. This is used in
-            # the case of network templates.
-            route_id = 'route{}_0'.format(veh_id)
-        else:
-            num_routes = len(self.master_kernel.network.rts[edge])
-            frac = [val[1] for val in self.master_kernel.network.rts[edge]]
-            route_id = 'route{}_{}'.format(edge, np.random.choice(
-                [i for i in range(num_routes)], size=1, p=frac)[0])
+        # if veh_id in self.master_kernel.network.rts:
+        #     # If the vehicle has its own route, use that route. This is used in
+        #     # the case of network templates.
+        #     route_id = 'route{}_0'.format(veh_id)
+        # else:
+        #     num_routes = len(self.master_kernel.network.rts[edge])
+        #     frac = [val[1] for val in self.master_kernel.network.rts[edge]]
+        #     route_id = 'route{}_{}'.format(edge, np.random.choice(
+        #         [i for i in range(num_routes)], size=1, p=frac)[0])
 
-        self.kernel_api.vehicle.addFull(
-            veh_id,
-            route_id,
-            typeID=str(type_id),
-            departLane=str(lane),
-            departPos=str(pos),
-            departSpeed=str(speed))
+        # self.kernel_api.vehicle.addFull(
+        #     veh_id,
+        #     route_id,
+        #     typeID=str(type_id),
+        #     departLane=str(lane),
+        #     departPos=str(pos),
+        #     departSpeed=str(speed))
 
     # OVERRIDE!!!
     def remove(self, veh_id):
@@ -1205,9 +1205,9 @@ class OTMVehicle(KernelVehicle):
 #         return new_obs
 
     # NOT IN BASE CLASS. WHO CALLS THIS??
-    # def get_initial_speed(self, veh_id):
-    #     """Return the initial speed of the vehicle of veh_id."""
-    #     return self.__vehicles[veh_id]["initial_speed"]
+    def get_initial_speed(self, veh_id):
+        """Return the initial speed of the vehicle of veh_id."""
+        return 0
 
 
     # NOT IN BASE CLASS. WHO CALLS THIS??
