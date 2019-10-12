@@ -93,8 +93,21 @@ class OTMKernelNetwork(BaseKernelNetwork):
             an object containing relevant network-specific features such as the
             locations and properties of nodes and edges in the network
         """
+        self.network = network
+        self.orig_name = network.orig_name
+        self.name = network.name
 
-        print("--- IMPLEMENT network/otm/generate_network ----")
+        # names of the soon-to-be-generated xml and sumo config files
+        self.nodfn = '%s.nod.xml' % self.network.name
+        # self.edgfn = '%s.edg.xml' % self.network.name
+        # self.typfn = '%s.typ.xml' % self.network.name
+        # self.cfgfn = '%s.netccfg' % self.network.name
+        # self.netfn = '%s.net.xml' % self.network.name
+        # self.confn = '%s.con.xml' % self.network.name
+        # self.roufn = '%s.rou.xml' % self.network.name
+        # self.addfn = '%s.add.xml' % self.network.name
+        # self.sumfn = '%s.sumo.cfg' % self.network.name
+        # self.guifn = '%s.gui.cfg' % self.network.name
 
         
         if True:
@@ -108,7 +121,7 @@ class OTMKernelNetwork(BaseKernelNetwork):
                         connections.extend(network.connections[key])
             else:
                 connections = None
-        
+            print(network)
             self._edges, self._connections = self.generate_net(
                 self.network.net_params,
                 self.network.traffic_lights,
