@@ -214,7 +214,7 @@ class TraCIKernelNetwork(BaseKernelNetwork):
         """Perform no action of value (networks are static)."""
         pass
 
-    def geself):
+    def close(self):
         """Close the network class.
 
         Deletes the xml files that were created by the network class. This
