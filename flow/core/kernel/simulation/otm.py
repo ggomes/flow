@@ -49,12 +49,16 @@ class OTMSimulation(KernelSimulation):
         """
         self.entry_point = common_gateway.jvm.EntryPointOTM()
         self.sim_step = sim_params.sim_step
-        return self.entry_point.api
+        return self.entry_point.api.scenario
 
     def simulation_step(self):
         """Advance the simulation by one step.
 
         This is done in most cases by calling a relevant simulator API method.
         """
-        self.kernel_api.run(self.current_time, self.current_time+self.sim_step)
-        self.current_time += self.sim_step
+        print("Gabriel implement this")
+        # advance one sim dt.
+
+        # Gabriel: implement a macro sim step. override flow.envs.base.Env.
+        # self.kernel_api.run(self.current_time, self.current_time+self.sim_step)
+        # self.current_time += self.sim_step
