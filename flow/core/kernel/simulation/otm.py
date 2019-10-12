@@ -1,5 +1,5 @@
 """Script containing the OTM simulation kernel class."""
-
+from py4j.java_gateway import JavaGateway, launch_gateway, GatewayParameters
 from flow.core.kernel.simulation import KernelSimulation
 from flow.core.util import ensure_dir
 import flow.config as config
@@ -13,17 +13,6 @@ import signal
 
 # Number of retries on restarting SUMO before giving up
 RETRIES_ON_ERROR = 10
-
-#!/usr/bin/env/python
-from py4j.java_gateway import JavaGateway, launch_gateway, GatewayParameters
-import matplotlib.pyplot as plt
-import multiprocessing
-import numpy as np
-import time
-import json
-import sys
-import os
-
 
 common_gateway = JavaGateway(gateway_parameters=GatewayParameters(
         port=launch_gateway(
