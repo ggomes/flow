@@ -290,8 +290,8 @@ class OTMKernelNetwork(BaseKernelNetwork):
 
         printxml(scenario, self.net_path + self.nodfn)
 
-        ## Gabriel put xml dummy here
-        self.cfg = self.net_path + self.nodfn 
+        ## Gabriel put xml dummy here (TODO FIX THIS LATER)
+        self.cfg = self.net_path + "line.xml" # self.nodfn
 
     # OVERRIDE!!
     def update(self, reset):
