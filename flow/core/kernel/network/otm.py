@@ -121,8 +121,7 @@ class OTMKernelNetwork(BaseKernelNetwork):
                         connections.extend(network.connections[key])
             else:
                 connections = None
-            print(network)
-            self._edges, self._connections = self.generate_net(
+            self.generate_net(
                 self.network.net_params,
                 self.network.traffic_lights,
                 self.network.nodes,
@@ -131,69 +130,69 @@ class OTMKernelNetwork(BaseKernelNetwork):
                 connections
             )
         
-        # list of edges and internal links (junctions)
-        self._edge_list = [
-            edge_id for edge_id in self._edges.keys() if edge_id[0] != ':'
-        ]
-        self._junction_list = list(
-            set(self._edges.keys()) - set(self._edge_list))
+        # # list of edges and internal links (junctions)
+        # self._edge_list = [
+        #     edge_id for edge_id in self._edges.keys() if edge_id[0] != ':'
+        # ]
+        # self._junction_list = list(
+        #     set(self._edges.keys()) - set(self._edge_list))
         
-        # maximum achievable speed on any edge in the network
-        self.__max_speed = max(
-            self.speed_limit(edge) for edge in self.get_edge_list())
+        # # maximum achievable speed on any edge in the network
+        # self.__max_speed = max(
+        #     self.speed_limit(edge) for edge in self.get_edge_list())
         
-        # length of the network, or the portion of the network in
-        # which cars are meant to be distributed
-        self.__non_internal_length = sum(
-            self.edge_length(edge_id) for edge_id in self.get_edge_list()
-        )
+        # # length of the network, or the portion of the network in
+        # # which cars are meant to be distributed
+        # self.__non_internal_length = sum(
+        #     self.edge_length(edge_id) for edge_id in self.get_edge_list()
+        # )
         
-        # parameters to be specified under each unique subclass's
-        # __init__ function
-        self.edgestarts = self.network.edge_starts
+        # # parameters to be specified under each unique subclass's
+        # # __init__ function
+        # self.edgestarts = self.network.edge_starts
         
-        # if no edge_starts are specified, generate default values to be used
-        # by the "get_x" method
-        if self.edgestarts is None:
-            length = 0
-            self.edgestarts = []
-            for edge_id in sorted(self._edge_list):
-                # the current edge starts where the last edge ended
-                self.edgestarts.append((edge_id, length))
-                # increment the total length of the network with the length of
-                # the current edge
-                length += self._edges[edge_id]['length']
+        # # if no edge_starts are specified, generate default values to be used
+        # # by the "get_x" method
+        # if self.edgestarts is None:
+        #     length = 0
+        #     self.edgestarts = []
+        #     for edge_id in sorted(self._edge_list):
+        #         # the current edge starts where the last edge ended
+        #         self.edgestarts.append((edge_id, length))
+        #         # increment the total length of the network with the length of
+        #         # the current edge
+        #         length += self._edges[edge_id]['length']
         
-        # these optional parameters need only be used if "no-internal-links"
-        # is set to "false" while calling sumo's netconvert function
-        self.internal_edgestarts = self.network.internal_edge_starts
-        self.internal_edgestarts_dict = dict(self.internal_edgestarts)
+        # # these optional parameters need only be used if "no-internal-links"
+        # # is set to "false" while calling sumo's netconvert function
+        # self.internal_edgestarts = self.network.internal_edge_starts
+        # self.internal_edgestarts_dict = dict(self.internal_edgestarts)
         
-        # total_edgestarts and total_edgestarts_dict contain all of the above
-        # edges, with the former being ordered by position
-        self.total_edgestarts = self.edgestarts + self.internal_edgestarts
-        self.total_edgestarts.sort(key=lambda tup: tup[1])
+        # # total_edgestarts and total_edgestarts_dict contain all of the above
+        # # edges, with the former being ordered by position
+        # self.total_edgestarts = self.edgestarts + self.internal_edgestarts
+        # self.total_edgestarts.sort(key=lambda tup: tup[1])
         
-        self.total_edgestarts_dict = dict(self.total_edgestarts)
+        # self.total_edgestarts_dict = dict(self.total_edgestarts)
         
-        self.__length = sum(
-            self._edges[edge_id]['length'] for edge_id in self._edges
-        )
+        # self.__length = sum(
+        #     self._edges[edge_id]['length'] for edge_id in self._edges
+        # )
         
-        if self.network.routes is None:
-            print("No routes specified, defaulting to single edge routes.")
-            self.network.routes = {edge: [edge] for edge in self._edge_list}
+        # if self.network.routes is None:
+        #     print("No routes specified, defaulting to single edge routes.")
+        #     self.network.routes = {edge: [edge] for edge in self._edge_list}
         
-        # specify routes vehicles can take  # TODO: move into a method
-        self.rts = self.network.routes
+        # # specify routes vehicles can take  # TODO: move into a method
+        # self.rts = self.network.routes
         
         # create the sumo configuration files
-        cfg_name = self.generate_cfg(self.network.net_params,
-                                     self.network.traffic_lights,
-                                     self.network.routes)
+        # cfg_name = self.generate_cfg(self.network.net_params,
+        #                              self.network.traffic_lights,
+        #                              self.network.routes)
         
-        # specify the location of the sumo configuration file
-        self.cfg = self.cfg_path + cfg_name
+        # # specify the location of the sumo configuration file
+        # self.cfg = self.cfg_path + cfg_name
 
    # TODO: nodes should have a traffic light option
     def generate_net(self,
@@ -230,7 +229,7 @@ class OTMKernelNetwork(BaseKernelNetwork):
                     and node.get('type', None) == 'traffic_light':
                 traffic_lights.add(node['id'])
             node_id_map[id_ctr] = node['id']
-            node['id'] = id_ctr
+            node['id'] = str(id_ctr)
 
             # modify the x and y values to be strings
             node['x'] = str(node['x'])
@@ -243,6 +242,9 @@ class OTMKernelNetwork(BaseKernelNetwork):
         network = etree.SubElement(scenario, 'network')
         # x = etree.Element('scenario', {'xmlns': 'opentrafficmodels'})
         for node_attributes in nodes:
+            print(node_attributes)
+            if 'radius' in node_attributes:
+                del node_attributes['radius']
             network.append(E('node', **node_attributes))
 
         # modify the length, shape, numLanes, and speed values
@@ -258,7 +260,7 @@ class OTMKernelNetwork(BaseKernelNetwork):
                 edge['speed'] = str(edge['speed'])
 
         # xml file for edges
-        edges = etree.SubElement(scenario, 'links')
+        edges = etree.SubElement(network, 'links')
         for eid, edge_attributes in enumerate(edges):
             edge_dict = {
                 'end_node_id': node_id_map[edge_attributes['to']],
@@ -268,9 +270,9 @@ class OTMKernelNetwork(BaseKernelNetwork):
                 'roadparams': '1',
                 'length': edge_attributes['length']
             }
-            link = E('link', attrib=edge_attributes)
-            link.append
-            edges.append(link)
+
+            link = etree.SubElement(edges, 'link', attrib=edge_dict)
+            # edges.append(link)
             if 'shape' in edge_attributes:
                 points = etree.SubElement(link, 'points')
                 for x, y in edge['shape']:
@@ -278,15 +280,18 @@ class OTMKernelNetwork(BaseKernelNetwork):
                         'x': x, 'y': y
                     })
 
-        roadparams = etree.SubElement(scenario, 'roadparams')
-        roadparams.append(E('roadparam'), attrib={
+        roadparams = etree.SubElement(network, 'roadparams')
+        roadparams.append(E('roadparam', attrib={
             'id': '1',
             'capacity': '1000',
             'jam_density': '200',
             'speed': '20'
-        })
+        }))
 
         printxml(scenario, self.net_path + self.nodfn)
+
+        ## Gabriel put xml dummy here
+        self.cfg = self.net_path + self.nodfn 
 
     # OVERRIDE!!
     def update(self, reset):
