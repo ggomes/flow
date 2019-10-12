@@ -14,12 +14,14 @@ import sys
 
 # Number of retries on restarting SUMO before giving up
 RETRIES_ON_ERROR = 10
+p =os.path.join(
+                os.path.dirname(__file__),
+                '../../../../otm-python-api-1.0-SNAPSHOT-jar-with-dependencies.jar')
 
+print(os.path.abspath(p))
 common_gateway = JavaGateway(gateway_parameters=GatewayParameters(
         port=launch_gateway(
-            classpath=os.path.join(
-                os.path.dirname(__file__),
-                '../../../otm-python-api-1.0-SNAPSHOT-jar-with-dependencies.jar'),
+            classpath=os.path.abspath(p),
             die_on_exit=True, redirect_stdout=sys.stdout
         ), auto_field=True, auto_convert=True
     ))

@@ -242,7 +242,6 @@ class OTMKernelNetwork(BaseKernelNetwork):
         network = etree.SubElement(scenario, 'network')
         # x = etree.Element('scenario', {'xmlns': 'opentrafficmodels'})
         for node_attributes in nodes:
-            print(node_attributes)
             if 'radius' in node_attributes:
                 del node_attributes['radius']
             network.append(E('node', **node_attributes))
