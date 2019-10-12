@@ -1057,34 +1057,38 @@ class OTMVehicle(KernelVehicle):
         # return self.kernel_api.vehicle.getMaxSpeed(veh_id)
 
 
-# NOTE: THIS IS NOT IN THE BASE CLASS. WHERE IS IT CALLED?
-# def initialize(self, vehicles):
-#     """Initialize vehicle state information.
-#
-#     This is responsible for collecting vehicle type information from the
-#     VehicleParams object and placing them within the Vehicles kernel.
-#
-#     Parameters
-#     ----------
-#     vehicles : flow.core.params.VehicleParams
-#         initial vehicle parameter information, including the types of
-#         individual vehicles and their initial speeds
-#     """
-#     self.type_parameters = vehicles.type_parameters
-#     self.minGap = vehicles.minGap
-#     self.num_vehicles = 0
-#     self.num_rl_vehicles = 0
-#
-#     self.__vehicles.clear()
-#     for typ in vehicles.initial:
-#         for i in range(typ['num_vehicles']):
-#             veh_id = '{}_{}'.format(typ['veh_id'], i)
-#             self.__vehicles[veh_id] = dict()
-#             self.__vehicles[veh_id]['type'] = typ['veh_id']
-#             self.__vehicles[veh_id]['initial_speed'] = typ['initial_speed']
-#             self.num_vehicles += 1
-#             if typ['acceleration_controller'][0] == RLController:
-#                 self.num_rl_vehicles += 1
+    # NOTE: This function should be in the Vehicle base class because it is called by flow/envs/base,
+    # but it is not.
+    def initialize(self, vehicles):
+        """Initialize vehicle state information.
+
+        This is responsible for collecting vehicle type information from the
+        VehicleParams object and placing them within the Vehicles kernel.
+
+        Parameters
+        ----------
+        vehicles : flow.core.params.VehicleParams
+            initial vehicle parameter information, including the types of
+            individual vehicles and their initial speeds
+        """
+
+        print(" -- IMPLEMENT: 420g9k3g")
+
+        # self.type_parameters = vehicles.type_parameters
+        # self.minGap = vehicles.minGap
+        # self.num_vehicles = 0
+        # self.num_rl_vehicles = 0
+        #
+        # self.__vehicles.clear()
+        # for typ in vehicles.initial:
+        #     for i in range(typ['num_vehicles']):
+        #         veh_id = '{}_{}'.format(typ['veh_id'], i)
+        #         self.__vehicles[veh_id] = dict()
+        #         self.__vehicles[veh_id]['type'] = typ['veh_id']
+        #         self.__vehicles[veh_id]['initial_speed'] = typ['initial_speed']
+        #         self.num_vehicles += 1
+        #         if typ['acceleration_controller'][0] == RLController:
+        #             self.num_rl_vehicles += 1
 
 
 # def _add_departed(self, veh_id, veh_type):

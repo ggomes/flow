@@ -9,6 +9,7 @@ import time
 import logging
 import subprocess
 import signal
+import sys
 
 
 # Number of retries on restarting SUMO before giving up

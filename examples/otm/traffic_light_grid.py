@@ -6,7 +6,7 @@ from flow.core.params import VehicleParams
 from flow.core.params import TrafficLightParams
 # from flow.core.params import SumoCarFollowingParams
 from flow.core.params import InFlows
-from flow.envs.ring.accel import AccelEnv, ADDITIONAL_ENV_PARAMS
+from flow.envs.macro_traffic_light_grid import MacroTrafficLightGridEnv, ADDITIONAL_ENV_PARAMS
 from flow.networks import TrafficLightGridNetwork
 
 
@@ -220,7 +220,7 @@ def traffic_light_grid_example(render=None, use_inflows=False):
         initial_config=initial_config,
         traffic_lights=tl_logic)
 
-    env = AccelEnv(env_params, sim_params, network, simulator='otm')
+    env = MacroTrafficLightGridEnv(env_params, sim_params, network, simulator='otm')
 
     return Experiment(env)
 
