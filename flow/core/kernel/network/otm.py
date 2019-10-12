@@ -96,7 +96,7 @@ class OTMKernelNetwork(BaseKernelNetwork):
             an object containing relevant network-specific features such as the
             locations and properties of nodes and edges in the network
         """
-
+        print("Implement Me")
         # # store the network object in the network variable
         # self.network = network
         # self.orig_name = network.orig_name
@@ -241,6 +241,7 @@ class OTMKernelNetwork(BaseKernelNetwork):
 
         Return -1001 if edge not found.
         """
+        print("Implement Me")
         # try:
         #     return self._edges[edge_id]['length']
         # except KeyError:
@@ -250,6 +251,7 @@ class OTMKernelNetwork(BaseKernelNetwork):
     # OVERRIDE!!
     def length(self):
         """Return the total length of all junctions and edges."""
+        print("Implement Me")
         # return self.__length
 
     # OVERRIDE!!
