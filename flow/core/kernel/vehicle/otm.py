@@ -506,31 +506,28 @@ class OTMVehicle(KernelVehicle):
         """Return the type of the vehicle of veh_id."""
         # return self.__vehicles[veh_id]["type"]
 
-    # OVERRIDE!!!
     def get_ids(self):
         """Return the names of all vehicles currently in the network."""
-        # return self.__ids
+        return self.__ids
 
     # OVERRIDE!!!
     def get_human_ids(self):
         """Return the names of all non-rl vehicles currently in the network."""
         # return self.__human_ids
 
-    # OVERRIDE!!!
     def get_controlled_ids(self):
         """Return the names of all flow acceleration-controlled vehicles.
 
         This only include vehicles that are currently in the network.
         """
-        # return self.__controlled_ids
+        return self.__controlled_ids
 
-    # OVERRIDE!!!
     def get_controlled_lc_ids(self):
         """Return the names of all flow lane change-controlled vehicles.
 
         This only include vehicles that are currently in the network.
         """
-        # return self.__controlled_lc_ids
+        return self.__controlled_lc_ids
 
     # OVERRIDE!!!
     def get_rl_ids(self):
@@ -558,12 +555,13 @@ class OTMVehicle(KernelVehicle):
         # num_inflow = self._num_departed[-int(time_span / self.sim_step):]
         # return 3600 * sum(num_inflow) / (len(num_inflow) * self.sim_step)
 
-    # OVERRIDE!!!
     def get_outflow_rate(self, time_span):
         """Return the outflow rate (in veh/hr) of vehicles from the network.
 
         This value is computed over the specified **time_span** seconds.
         """
+        # TODO: Fixme
+        return 0
         # if len(self._num_arrived) == 0:
         #     return 0
         # num_outflow = self._num_arrived[-int(time_span / self.sim_step):]
@@ -593,7 +591,6 @@ class OTMVehicle(KernelVehicle):
         # else:
         #     return 0
 
-    # OVERRIDE!!!
     def get_speed(self, veh_id, error=-1001):
         """Return the speed of the specified vehicle.
 
@@ -608,6 +605,8 @@ class OTMVehicle(KernelVehicle):
         -------
         float
         """
+        # TODO: Fix me
+        return 0
         # if isinstance(veh_id, (list, np.ndarray)):
         #     return [self.get_speed(vehID, error) for vehID in veh_id]
         # return self.__sumo_obs.get(veh_id, {}).get(tc.VAR_SPEED, error)

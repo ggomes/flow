@@ -1,13 +1,9 @@
 """Script containing the OTM network kernel class."""
 
 from flow.core.kernel.network import BaseKernelNetwork
-from flow.core.util import makexml, printxml, ensure_dir
-import time
-import os
-import subprocess
-import xml.etree.ElementTree as ElementTree
+from flow.core.util import printxml, ensure_dir
 from lxml import etree
-from copy import deepcopy
+import os
 
 E = etree.Element
 
@@ -19,15 +15,6 @@ WAIT_ON_ERROR = 1
 
 def _flow(name, vtype, route, **kwargs):
     return E('flow', id=name, route=route, type=vtype, **kwargs)
-
-
-def _inputs(net=None, rou=None, add=None, gui=None):
-    inp = E("input")
-    inp.append(E("net-file", value=net))
-    inp.append(E("route-files", value=rou))
-    inp.append(E("additional-files", value=add))
-    inp.append(E("gui-settings-file", value=gui))
-    return inp
 
 
 class OTMKernelNetwork(BaseKernelNetwork):
@@ -58,13 +45,13 @@ class OTMKernelNetwork(BaseKernelNetwork):
             + '/debug/otmxml/'
 
         ensure_dir('%s' % self.net_path)
-        
+
         # variables to be defined during network generation
         self.network = None
-        
+
         self.nodfn = None
         # self.guifn = None
-        
+
         self._edges = None
         self._connections = None
         self._edge_list = None
@@ -110,28 +97,28 @@ class OTMKernelNetwork(BaseKernelNetwork):
             self.network.types,
             connections
         )
-        
+
         # # list of edges and internal links (junctions)
         # self._edge_list = [
         #     edge_id for edge_id in self._edges.keys() if edge_id[0] != ':'
         # ]
         # self._junction_list = list(
         #     set(self._edges.keys()) - set(self._edge_list))
-        
+
         # # maximum achievable speed on any edge in the network
         # self.__max_speed = max(
         #     self.speed_limit(edge) for edge in self.get_edge_list())
-        
+
         # # length of the network, or the portion of the network in
         # # which cars are meant to be distributed
         # self.__non_internal_length = sum(
         #     self.edge_length(edge_id) for edge_id in self.get_edge_list()
         # )
-        
+
         # # parameters to be specified under each unique subclass's
         # # __init__ function
         # self.edgestarts = self.network.edge_starts
-        
+
         # # if no edge_starts are specified, generate default values to be used
         # # by the "get_x" method
         # if self.edgestarts is None:
@@ -143,7 +130,7 @@ class OTMKernelNetwork(BaseKernelNetwork):
         #         # increment the total length of the network with the length of
         #         # the current edge
         #         length += self._edges[edge_id]['length']
-        
+
         # # these optional parameters need only be used if "no-internal-links"
         # # is set to "false" while calling sumo's netconvert function
         # self.internal_edgestarts = self.network.internal_edge_starts
@@ -156,9 +143,9 @@ class OTMKernelNetwork(BaseKernelNetwork):
         
         # self.total_edgestarts_dict = dict(self.total_edgestarts)
         
-        # self.__length = sum(
-        #     self._edges[edge_id]['length'] for edge_id in self._edges
-        # )
+        self.__length = sum(
+            float(self._edges[edge_id]['length']) for edge_id in self._edges
+        )
         
         # if self.network.routes is None:
         #     print("No routes specified, defaulting to single edge routes.")
@@ -175,7 +162,7 @@ class OTMKernelNetwork(BaseKernelNetwork):
         # # specify the location of the sumo configuration file
         # self.cfg = self.cfg_path + cfg_name
 
-   # TODO: nodes should have a traffic light option
+    # TODO: nodes should have a traffic light option
     def generate_net(self,
                      net_params,
                      traffic_lights,
@@ -203,7 +190,6 @@ class OTMKernelNetwork(BaseKernelNetwork):
             nodes[indx]['type'] = 'traffic_light'
 
         node_id_map = {}
-        id_ctr = 0
         # for nodes that have traffic lights that haven't been added
         for nid, node in enumerate(nodes):
             if node['id'] not in tl_ids \
@@ -216,12 +202,10 @@ class OTMKernelNetwork(BaseKernelNetwork):
             node['x'] = str(node['x'])
             node['y'] = str(node['y'])
 
-
         # xml file for nodes; contains nodes for the boundary points with
         # respect to the x and y axes
         scenario = etree.Element('scenario', {'xmlns': 'opentrafficmodels'})
         network = etree.SubElement(scenario, 'network')
-        # x = etree.Element('scenario', {'xmlns': 'opentrafficmodels'})
         for node_attributes in nodes:
             if 'radius' in node_attributes:
                 del node_attributes['radius']
@@ -272,25 +256,14 @@ class OTMKernelNetwork(BaseKernelNetwork):
 
         printxml(scenario, self.net_path + self.nodfn)
 
-        ## Gabriel put xml dummy here (TODO FIX THIS LATER)
-        self.cfg = self.net_path + "line.xml" # self.nodfn
+        # Gabriel put xml dummy here (TODO FIX THIS LATER)
+        self.cfg = self.net_path + "line.xml"  # self.nodfn
         return edge_dict
 
     # OVERRIDE!!
     def update(self, reset):
-        """Update the network with current state information.
-
-        Since networks are generally static, this will most likely not include
-        any actions being performed. This is primarily here for consistency
-        with other sub-kernels.
-
-        Parameters
-        ----------
-        reset : bool
-            specifies whether the simulator was reset in the last simulation
-            step
-        """
-        raise NotImplementedError
+        """Perform no action of value (networks are static)."""
+        pass
 
     def close(self):
         """Close the network."""
@@ -337,17 +310,16 @@ class OTMKernelNetwork(BaseKernelNetwork):
         """Return the maximum achievable speed on any edge in the network."""
         # return self.__max_speed
 
-    # OVERRIDE!!
     def num_lanes(self, edge_id):
         """Return the number of lanes of a given edge/junction.
 
         Return -1001 if edge not found.
         """
-        # try:
-        #     return self._edges[edge_id]['lanes']
-        # except KeyError:
-        #     print('Error in num lanes with key', edge_id)
-        #     return -1001
+        try:
+            return self._edges[edge_id]['lanes']
+        except KeyError:
+            print('Error in num lanes with key', edge_id)
+            return -1001
 
     # OVERRIDE!!
     def get_edge_list(self):
