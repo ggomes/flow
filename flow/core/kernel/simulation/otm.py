@@ -1,14 +1,12 @@
 """Script containing the OTM simulation kernel class."""
 from py4j.java_gateway import JavaGateway, launch_gateway, GatewayParameters
 from flow.core.kernel.simulation import KernelSimulation
-from flow.core.util import ensure_dir
 import flow.config as config
-import traceback
 import os
 import sys
 
 
-p = os.path.join(config.PROJECT_PATH, 
+p = os.path.join(config.PROJECT_PATH,
                  'otm-python-api-1.0-SNAPSHOT-jar-with-dependencies.jar')
 jarpath = os.path.abspath(p)
 common_gateway = JavaGateway(gateway_parameters=GatewayParameters(
@@ -16,7 +14,7 @@ common_gateway = JavaGateway(gateway_parameters=GatewayParameters(
                                                  die_on_exit=True,
                                                  redirect_stdout=sys.stdout),
                              auto_field=True, auto_convert=True
-                            ))
+                             ))
 
 
 class OTMSimulation(KernelSimulation):
@@ -48,6 +46,7 @@ class OTMSimulation(KernelSimulation):
             simulation-specific parameters
         """
         self.entry_point = common_gateway.jvm.EntryPointOTM()
+        self.entry_point.api.load(network.cfg)
         self.sim_step = sim_params.sim_step
         return self.entry_point.api.scenario
 
@@ -56,7 +55,8 @@ class OTMSimulation(KernelSimulation):
 
         This is done in most cases by calling a relevant simulator API method.
         """
-        print("Gabriel implement this")
+        print("Gabriel implement simulation step")
+        pass
         # advance one sim dt.
 
         # Gabriel: implement a macro sim step. override flow.envs.base.Env.
